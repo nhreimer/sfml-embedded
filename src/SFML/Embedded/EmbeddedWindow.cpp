@@ -1,8 +1,8 @@
-#include "EmbeddedWindow.hpp"
+#include "../../../include/SFML/Embedded/EmbeddedWindow.hpp"
 
 #include "EmbeddedWindowImpl.hpp"
-#include "EmbeddedWindowEventReceiver.hpp"
-#include "EmbeddedLogger.hpp"
+#include "../../../include/SFML/Embedded/EmbeddedWindowEventReceiver.hpp"
+#include "../../../include/SFML/Embedded/EmbeddedLogger.hpp"
 
 namespace sf
 {

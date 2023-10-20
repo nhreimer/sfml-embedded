@@ -3,7 +3,7 @@
 ////////////////////////////////////////////////////////////
 
 #include "EmbeddedWindowImplWin32.hpp"
-#include "EmbeddedLogger.hpp"
+#include "../../../include/SFML/Embedded/EmbeddedLogger.hpp"
 
 #include <iostream>
 #include <tuple>

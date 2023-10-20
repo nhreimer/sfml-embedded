@@ -1,4 +1,4 @@
-#include "EmbeddedLogger.hpp"
+#include "../../../include/SFML/Embedded/EmbeddedLogger.hpp"
 
 #ifdef USING_LOGGER
 

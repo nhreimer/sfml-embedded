@@ -153,9 +153,9 @@ that are independent of each other, but managing the coordinates correctly can b
 
 #include <SFML/Graphics.hpp>
 
-#include "EmbeddedWindow.hpp"
-#include "EmbeddedWindowEventReceiver.hpp"
-#include "EmbeddedLogger.hpp"
+#include <SFML/Embedded/EmbeddedWindow.hpp>
+#include <SFML/Embedded/EmbeddedWindowEventReceiver.hpp>
+#include <SFML/Embedded/EmbeddedLogger.hpp>
 
 namespace nx
 {

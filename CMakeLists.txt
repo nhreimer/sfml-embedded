@@ -2,14 +2,12 @@ cmake_minimum_required( VERSION 3.26 )
 project( sfml-embedded )
 set( CMAKE_CXX_STANDARD 17 )
 
-#set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
-
 add_library( ${PROJECT_NAME}
   STATIC
-  EmbeddedWindowImplWin32.cpp
-  EmbeddedWindowImpl.cpp
-  EmbeddedWindow.cpp
-  EmbeddedLogger.cpp
+  src/SFML/Embedded/EmbeddedWindowImplWin32.cpp
+  src/SFML/Embedded/EmbeddedWindowImpl.cpp
+  src/SFML/Embedded/EmbeddedWindow.cpp
+  src/SFML/Embedded/EmbeddedLogger.cpp
 )
 
 set( SFML_STATIC_LIBRARIES TRUE )
