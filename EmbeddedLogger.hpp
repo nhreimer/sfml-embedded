@@ -51,14 +51,13 @@ namespace sf
 class EmbeddedLogger
 {
 public:
-  static inline void doNothing( ... ) {}
   static void initializeConsole();
   static void initializeLogger( const std::string& filename );
   static void initializeNullLogger();
 };
 }
 
-#define LOG_TRACE( ... ) sf::EmbeddedLogger::doNothing( __VA_ARGS__ )
+#define LOG_TRACE( ... )
 #define LOG_DEBUG( ... ) LOG_TRACE( __VA_ARGS__ )
 #define LOG_INFO( ... ) LOG_TRACE( __VA_ARGS__ )
 #define LOG_WARN( ... ) LOG_TRACE( __VA_ARGS__ )

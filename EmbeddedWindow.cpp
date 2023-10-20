@@ -95,6 +95,14 @@ sf::Vector2u EmbeddedWindow::getParentWindowSize() const
 ////////////////////////////////////////////////////////////
 // PUBLIC
 [[nodiscard]]
+int EmbeddedWindow::getNativeTitlebarHeight() const
+{
+  return m_impl->getNativeTitlebarHeight();
+}
+
+////////////////////////////////////////////////////////////
+// PUBLIC
+[[nodiscard]]
 uint32_t EmbeddedWindow::getPollRateInMS() const
 {
   return m_impl->getPollRateInMS();

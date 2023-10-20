@@ -60,6 +60,10 @@ public:
   [[nodiscard]]
   sf::Vector2u getParentWindowSize() const;
 
+  /// \brief attempts to retrieve the size of a system's titlebar
+  [[nodiscard]]
+  int getNativeTitlebarHeight() const;
+
   /// \brief gets the refresh/update rate (will differ by platform)
   [[nodiscard]]
   uint32_t getPollRateInMS() const;

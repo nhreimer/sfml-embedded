@@ -138,91 +138,53 @@ private:
 
 };
 ```
-## SFML Window Example
+## SFML Parent Window to Child Window Example
 
-### initialization
+Note that it's possible to create a parent that has splitscreens with multiple child render windows
+that are independent of each other, but managing the coordinates correctly can be challenging.
 
-```c++
-int main()
-{
-  // set up console logging
-  sf::EmbeddedLogger::initializeConsole();
-  sf::Window window;
-
-  // create our parent window
-  window.create( sf::VideoMode { 800, 600 }, "Parent Window" );
-  window.setFramerateLimit( 60 );
-
-  // embedded window #1
-  nx::EventReceiver eventReceiver( sf::Color::Cyan );
-  sf::EmbeddedWindow emWin( window.getSystemHandle(), eventReceiver );
-
-  // embedded window #2
-  nx::EventReceiver eventReceiver2( sf::Color::Magenta );
-  sf::EmbeddedWindow emWin2( window.getSystemHandle(), eventReceiver2 );
-
-  while ( window.isOpen() )
-  {
-    sf::Event event {};
-    while ( window.pollEvent( event ) )
-    {
-      if ( event.type == sf::Event::Closed )
-        return 0;
-    }
-    
-    // prevent flickering by only update as needed
-    if ( nx::g_update )
-    {
-      window.display();
-      nx::g_update = false;
-    }
-  }
-
-  return 0;
-}
-```
-
-### set up event receiver
+![Image](scrots/sfml-to-sfml.png)
 
 ```c++
+#define USING_LOGGER
+
+#include <ctime>
+#include <random>
+
+#include <SFML/Graphics.hpp>
+
+#include "EmbeddedWindow.hpp"
+#include "EmbeddedWindowEventReceiver.hpp"
+#include "EmbeddedLogger.hpp"
+
 namespace nx
 {
-
-bool g_update = false;
 
 class EventReceiver : public sf::EmbeddedWindowEventReceiver
 {
 public:
 
-  explicit EventReceiver( const sf::Color& bgColor )
-    : m_winId( m_winCounter ),
-      m_bgColor( bgColor )
-  {
-    ++m_winCounter;
-  }
+  EventReceiver() = default;
 
-  ~EventReceiver()
-  {
-    --m_winCounter;
-  }
+  ~EventReceiver() = default;
 
   void onWindowCreated( const sf::EmbeddedWindow &embeddedWindow, sf::RenderWindow &window ) override
   {
-    std::cout << "created window\n";
+    m_rndgen.seed( std::time( nullptr ) );
     window.setActive();
     window.requestFocus();
-    updateClientSize( embeddedWindow );
+
+    for ( auto& shape : m_shapes )
+      initializeShape( shape, window.getSize() );
+
+    m_timer.restart();
   }
 
   void onWindowDestroyed( const sf::EmbeddedWindow &embeddedWindow, sf::RenderWindow &window ) override
-  {
-    std::cout << "destroying window\n";
-  }
+  {}
 
   void onError() override
-  {
-    std::cerr << "failed to create window\n";
-  }
+  {}
 
   void onFrame( const sf::EmbeddedWindow &embeddedWindow, sf::RenderWindow &window ) override
   {
@@ -232,66 +194,111 @@ public:
       if ( event.type == sf::Event::Closed )
         return;
 
-      if ( event.type == sf::Event::MouseButtonReleased )
-        updateClientSize( embeddedWindow );
+      if ( event.type == sf::Event::MouseButtonReleased &&
+           event.mouseButton.button == sf::Mouse::Button::Left )
+      {
+        auto mousePosition = embeddedWindow.getCursorPosition();
+
+        for ( uint32_t i = 0; i < m_shapes.size(); ++i )
+        {
+          if ( m_shapes[ i ].getGlobalBounds().contains( ( float )mousePosition.x, ( float )mousePosition.y ) )
+          {
+            LOG_INFO( "Clicked on shape {}", ( i + 1 ) );
+            break;
+          }
+        }
+      }
     }
 
-    window.clear( m_bgColor );
+    updateObjects( m_timer.restart(), window.getSize() );
+    window.clear( { 32, 32, 32 } );
+    for ( auto& shape : m_shapes )
+      window.draw( shape );
+
     window.display();
   }
 
 private:
 
-  void updateClientSize( const sf::EmbeddedWindow& embeddedWindow ) const
+  void initializeShape( sf::CircleShape& shape, const sf::Vector2u& winSize )
   {
-    // parent window size
-    ::RECT parentPosRect;
-    // ::GetClientRect( embeddedWindow.getParentNativeHandle(), &rect );
-    ::GetWindowRect( embeddedWindow.getParentSystemHandle(), &parentPosRect );
+    // reset its position
+    shape.setPosition( { ( float )( m_rndgen() % winSize.x ), 0.f } );
+    shape.setFillColor( { ( uint8_t )( m_rndgen() % 255 ),
+                          ( uint8_t )( m_rndgen() % 255 ),
+                          ( uint8_t )( m_rndgen() % 255 ) } );
+  }
 
-    auto parentSize = sf::Vector2u { ( uint32_t )parentPosRect.right - parentPosRect.left,
-                                     ( uint32_t )parentPosRect.bottom - parentPosRect.top };
-
-    ::RECT childPosRect;
-    ::GetWindowRect( embeddedWindow.getSystemHandle(), &childPosRect );
-
-    auto childSize = sf::Vector2u { ( uint32_t )childPosRect.right - childPosRect.left,
-                                    ( uint32_t )childPosRect.bottom - childPosRect.top };
-
-//        std::cout << +m_winId << ": " << size.x << ", " << size.y
-//                  << " -> " << parentPosRect.left << ", " << parentPosRect.top << ", " << parentPosRect.right << ", " << parentPosRect.bottom
-//                  << " -> " << childPosRect.left << ", " << childPosRect.top << ", " << childPosRect.right << ", " << childPosRect.bottom
-//                  << std::endl;
-
-    auto proposedX = ( float )( parentPosRect.right - parentPosRect.left ) / ( float )m_winCounter;
-    sf::Vector2u newPosition = { ( uint32_t )proposedX * ( m_winId - 1 ), parentSize.y };
-
-    //           409                  0                        647
-//    std::cout << proposedX << ": " << newPosition.x << ", " << newPosition.y << std::endl;
-//    std::cout << parentSize.x << " vs " << childSize.x << std::endl;
-
-    if ( childSize.x > ( uint32_t )proposedX )
+  void updateObjects( const sf::Time& delta, const sf::Vector2u& winSize )
+  {
+    for ( auto & shape : m_shapes )
     {
-      // TODO: find how to use positions to set
-      // TODO: request native refreshes?
-      //::SetWindowPos( embeddedWindow.getNativeHandle(), NULL, 0, 0, 409, 647, 0 );
-      ::SetWindowPos( embeddedWindow.getSystemHandle(),
-                      nullptr,
-                      ( int )newPosition.x, 0,
-                      ( int )proposedX, ( int )newPosition.y,
-                      0 );
+      auto pos = shape.getPosition();
+      shape.setRadius( 20.f );
 
-      g_update = true;
+      if ( pos.y > winSize.y )
+        initializeShape( shape, winSize );
+      else
+      {
+        auto randomDrag = ( float )( m_rndgen() % ( uint32_t )( sm_pixelsPerSecond * sm_drag ) );
+        auto movement = delta.asSeconds() * sm_pixelsPerSecond * sm_velocity + randomDrag;
+        shape.move( { 0.f, movement } );
+      }
     }
   }
 
 private:
 
-  uint8_t m_winId;
-  sf::Color m_bgColor;
-  static inline std::atomic< uint8_t > m_winCounter { 1 };
+  static const inline float sm_drag { .25f };
+  static const inline float sm_velocity { 1.f };
+  static const inline float sm_pixelsPerSecond { 10.f };
+
+  std::uniform_int_distribution< int > m_distribution;
+  std::mt19937 m_rndgen;
+
+  std::vector< sf::CircleShape > m_shapes { 25 };
+  sf::Clock m_timer;
 
 };
+}
+
+int main()
+{
+  sf::EmbeddedLogger::initializeConsole();
+  sf::Window window;
+
+  window.create( sf::VideoMode { 440, 440 }, "Parent Window" );
+  window.setFramerateLimit( 60 );
+
+  window.setPosition( { 40, 40 } );
+
+  nx::EventReceiver eventReceiver;
+  sf::EmbeddedWindow emWin( window.getSystemHandle(), eventReceiver );
+
+  sf::Vector2i winPos = { -1, -1 };
+
+  while ( window.isOpen() )
+  {
+    sf::Event event {};
+    while ( window.pollEvent( event ) )
+    {
+      if ( event.type == sf::Event::Closed )
+        return 0;
+    }
+
+    auto nextWinPos = window.getPosition();
+    if ( nextWinPos != winPos )
+    {
+      LOG_INFO( "parent window position: {}, {}", nextWinPos.x, nextWinPos.y );
+      winPos = nextWinPos;
+    }
+
+    // no need to refresh the parent unless making the child window smaller than the parent
+    // which is not recommended
+    // window.display();
+  }
+
+  return 0;
 }
 ```
 

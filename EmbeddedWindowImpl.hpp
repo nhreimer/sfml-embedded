@@ -31,6 +31,9 @@ public:
   virtual sf::Vector2u getParentWindowSize() const { return { 0, 0}; }
 
   [[nodiscard]]
+  virtual int getNativeTitlebarHeight() const { return 0; }
+
+  [[nodiscard]]
   virtual uint32_t getPollRateInMS() const { return UINT32_MAX; }
 
   [[nodiscard]]

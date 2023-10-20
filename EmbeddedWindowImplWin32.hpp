@@ -44,7 +44,6 @@ class EmbeddedWindowImplWin32 : public sf::priv::EmbeddedWindowImpl
         UINT_PTR timerResult { 0 };              // timer id
     };
 
-    // converts Win32 specifics to SFML or std equivalents
     ////////////////////////////////////////////////////////////////////////////////
     /// WIN32 WINDOW HELPER
     ////////////////////////////////////////////////////////////////////////////////
@@ -99,6 +98,9 @@ public:
 
     [[nodiscard]]
     sf::Vector2u getParentWindowSize() const override;
+
+    [[nodiscard]]
+    int getNativeTitlebarHeight() const override;
 
     [[nodiscard]]
     uint32_t getPollRateInMS() const override;

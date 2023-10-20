@@ -97,6 +97,15 @@ sf::Vector2u EmbeddedWindowImplWin32::getParentWindowSize() const
 
 ////////////////////////////////////////////////////////////
 // PUBLIC
+int EmbeddedWindowImplWin32::getNativeTitlebarHeight() const
+{
+  return ( ::GetSystemMetrics( SM_CYFRAME ) +
+           ::GetSystemMetrics( SM_CYCAPTION ) +
+           ::GetSystemMetrics( SM_CXPADDEDBORDER ) );
+}
+
+////////////////////////////////////////////////////////////
+// PUBLIC
 unsigned int EmbeddedWindowImplWin32::getPollRateInMS() const
 {
     return static_cast< unsigned int >( USER_TIMER_MINIMUM );
@@ -123,12 +132,11 @@ sf::Vector2i EmbeddedWindowImplWin32::getRelativeWindowPosition() const
   // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-mapwindowpoints
   // If the function fails, the return value is zero. Call SetLastError prior to calling this method to differentiate
   // an error return value from a legitimate "0" return value.
-  ::SetLastError( -1 );
-  if ( ::MapWindowPoints( m_win32.childHwnd,  m_win32.parentHwnd, (LPPOINT)&mapChildRect, 2 ) == 0 )
-  {
-    LOG_ERROR( "failed to map window points to parent: {}", ::GetLastError() );
-    return { -1, -1 };
-  }
+//  ::SetLastError( -1 );
+
+  // this tends to fail but is successful nonetheless
+  ::MapWindowPoints( m_win32.childHwnd,  m_win32.parentHwnd, (LPPOINT)&mapChildRect, 2 );
+
 
   return { mapChildRect.left - childRect.left, mapChildRect.right - childRect.right };
 }
