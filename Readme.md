@@ -2,11 +2,11 @@
 
 ## what is it
 
-it's an extension to SFML that creates embedded render windows (sf::RenderWindow). It primarily targets audio plugins (VSt3, CLAP), where a parent window is handed off to a plugin, so that a child window can be attached to it.
+it's an extension to SFML that creates embedded render windows (sf::RenderWindow). It primarily targets audio plugins (VST3, CLAP), where a parent window is handed off to a plugin, so that a child window can be attached to it.
 
 ## dependencies
 
-There are no dependencies outside of SFML
+There are no dependencies outside of SFML, unless you want to enable logging. In which case, you'll need https://github.com/gabime/spdlog.
 
 ## build
 
@@ -32,6 +32,19 @@ sf::EmbeddedLogger::initializeLogger( "/path/to/log/file.txt" );
 
 // now you can use all the logging macros
 LOG_ERROR( "check out this variable {}", myVar );
+```
+
+There are 3 built-in types of loggers and they can be combined. Arbitrary sinks can be added for more flexibility.
+
+```c++
+// 1. log to file
+sf::EmbeddedLogger::initializeLogger( "/path/to/log/file.txt" );
+// 2. log to console
+sf::EmbeddedLogger::initializeConsole();
+// 3. log nowhere
+sf::EmbeddedLogger::initializeNullLogger();
+// 4. any sink
+sf::EmbeddedLogger::addSink( myCustomSpdlogSink );
 ```
 
 ## VST3 Example

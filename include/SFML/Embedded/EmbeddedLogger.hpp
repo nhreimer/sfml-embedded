@@ -28,6 +28,8 @@ public:
   static void initializeConsole();
   static void initializeLogger( const std::string& filename );
   static void initializeNullLogger();
+  static void addSink( std::shared_ptr< spdlog::sinks::sink > sink );
+  static bool isInitialized();
 
 private:
 
@@ -54,6 +56,8 @@ public:
   static void initializeConsole();
   static void initializeLogger( const std::string& filename );
   static void initializeNullLogger();
+  static void addSink( std::shared_ptr< spdlog::sinks::sink > sink );
+  static bool isInitialized() { return false; }
 };
 }
 
