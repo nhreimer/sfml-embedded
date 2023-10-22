@@ -1,6 +1,6 @@
-#include "../../../include/SFML/Embedded/EmbeddedLogger.hpp"
+#include "SFML/Embedded/EmbeddedLogger.hpp"
 
-#ifdef USING_LOGGER
+#ifdef SFML_EMBEDDED_LOGGING
 
 ////////////////////////////////////////////////////////////
 // PUBLIC
@@ -79,28 +79,6 @@ void sf::EmbeddedLogger::ensureLoggerExists()
   log->flush_on( spdlog::level::debug );
   log->set_pattern( "[%L][%t][%H:%M:%S.%e][%!:%#] %v" );
 }
-
-#else
-
-////////////////////////////////////////////////////////////
-// PUBLIC
-void sf::EmbeddedLogger::initializeConsole()
-{}
-
-////////////////////////////////////////////////////////////
-// PUBLIC
-void sf::EmbeddedLogger::initializeLogger( const std::string &filename )
-{}
-
-////////////////////////////////////////////////////////////
-// PUBLIC
-void sf::EmbeddedLogger::initializeNullLogger()
-{}
-
-////////////////////////////////////////////////////////////
-// PUBLIC
-void sf::EmbeddedLogger::addSink( std::shared_ptr< spdlog::sinks::sink > sink )
-{}
 
 #endif
 

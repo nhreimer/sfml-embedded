@@ -26,12 +26,13 @@ set( COMPILE_DEFS
 
 if( DEFINED SPDLOG_DIR )
   list( APPEND INCL_DIRS ${SPDLOG_DIR} )
-  list( APPEND COMPILE_DEFS -DUSING_LOGGER )
+  list( APPEND COMPILE_DEFS -DSFML_EMBEDDED_LOGGING )
 endif()
 
 target_include_directories( ${PROJECT_NAME}
   PRIVATE
   ${INCL_DIRS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries( ${PROJECT_NAME}

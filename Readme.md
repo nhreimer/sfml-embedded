@@ -13,18 +13,29 @@ There are no dependencies outside of SFML, unless you want to enable logging. In
 
 It's currently only a static Windows library. run cmake
 ```bash
-cmake -DSFML_DIR=/path/to/sfml/cmake/files .
+cd /path/to/sfml-embedded
+mkdir build
+cd build
+cmake -DSFML_DIR=/path/to/sfml/cmake/files ..  
 ```
 
 ## logging
 
-Because stderr isn't available, an optional built-in logger is provided via spdlog.
+Because stderr isn't available in most circumstances, an optional built-in logger is provided via spdlog.
 
-It can be enabled by using:
+It can be enabled when building the library by using:
+
+```bash
+cd /path/to/sfml-embedded
+mkdir build
+cd build
+cmake -DSFML_DIR=/path/to/sfml/cmake/files -DSPDLOG_DIR=/path/to/spdlog/include ..  
+```
+
+in application code, the following cmake option can be used to automatically include it
 
 ```cmake
-cmake -DSPDLOG_DIR=/path/to/spdlog/include
-add_definitions( -DUSE_LOGGING )
+add_definitions( -DSFML_EMBEDDED_LOGGING )
 ```
 
 ```c++
@@ -160,16 +171,11 @@ that are independent of each other, but managing the coordinates correctly can b
 ![Image](scrots/sfml-to-sfml.png)
 
 ```c++
-#define USING_LOGGER
-
 #include <ctime>
 #include <random>
 
 #include <SFML/Graphics.hpp>
-
-#include <SFML/Embedded/EmbeddedWindow.hpp>
-#include <SFML/Embedded/EmbeddedWindowEventReceiver.hpp>
-#include <SFML/Embedded/EmbeddedLogger.hpp>
+#include <SFML/Embedded.hpp>
 
 namespace nx
 {

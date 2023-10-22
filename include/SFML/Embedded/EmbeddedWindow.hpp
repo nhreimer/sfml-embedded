@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "EmbeddedWindowEventState.hpp"
+#include "SFML/Embedded/EmbeddedWindowEventState.hpp"
 
 // forward declaration
 namespace sf::priv

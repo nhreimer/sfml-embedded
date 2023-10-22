@@ -6,7 +6,7 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
-#include "../../../include/SFML/Embedded/EmbeddedWindowEventState.hpp"
+#include "SFML/Embedded/EmbeddedWindowEventState.hpp"
 
 namespace sf::priv
 {

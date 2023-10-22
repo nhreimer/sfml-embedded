@@ -1,13 +1,10 @@
 #pragma once
 
-#ifdef USING_LOGGER
+#ifdef SFML_EMBEDDED_LOGGING
 
 #if !defined(__PRETTY_FUNCTION__) && !defined(__GNUC__)
 #define __PRETTY_FUNCTION__ __FUNCSIG__
 #endif
-
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-//#define SPDLOG_FUNCTION __PRETTY_FUNCTION__
 
 #include <spdlog/spdlog.h>
 #include <spdlog/logger.h>
@@ -47,19 +44,6 @@ private:
 #define LOG_CRITICAL( ... ) SPDLOG_LOGGER_CRITICAL( sf::EmbeddedLogger::log, __VA_ARGS__ )
 
 #else
-
-namespace sf
-{
-class EmbeddedLogger
-{
-public:
-  static void initializeConsole();
-  static void initializeLogger( const std::string& filename );
-  static void initializeNullLogger();
-  static void addSink( std::shared_ptr< spdlog::sinks::sink > sink );
-  static bool isInitialized() { return false; }
-};
-}
 
 #define LOG_TRACE( ... )
 #define LOG_DEBUG( ... ) LOG_TRACE( __VA_ARGS__ )

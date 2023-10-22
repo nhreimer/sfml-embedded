@@ -1,8 +1,8 @@
-#include "../../../include/SFML/Embedded/EmbeddedWindow.hpp"
+#include "SFML/Embedded/EmbeddedWindow.hpp"
 
 #include "EmbeddedWindowImpl.hpp"
-#include "../../../include/SFML/Embedded/EmbeddedWindowEventReceiver.hpp"
-#include "../../../include/SFML/Embedded/EmbeddedLogger.hpp"
+#include "SFML/Embedded/EmbeddedWindowEventReceiver.hpp"
+#include "SFML/Embedded/EmbeddedLogger.hpp"
 
 namespace sf
 {
@@ -53,7 +53,7 @@ EmbeddedWindow::EmbeddedWindow( WindowHandle parentHandle,
       m_window.setSize( startingSize );
 
     // notify successful window creation here
-    LOG_DEBUG( "created embedded window" );
+    LOG_INFO( "created embedded window" );
 
     m_embeddedWindowEvent.onWindowCreated( *this, m_window );
   }
