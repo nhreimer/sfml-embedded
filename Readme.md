@@ -326,7 +326,7 @@ int main()
 
 Same license as SFML [zlib/libpng license](https://opensource.org/licenses/Zlib).
 
-Copyright (c) 2023 Nicholas Hans
+Copyright (c) 2023 Nicholas Reimer
 
 This software is provided ‘as-is’, without any express or implied
 warranty. In no event will the authors be held liable for any damages

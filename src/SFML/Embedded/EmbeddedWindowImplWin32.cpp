@@ -18,6 +18,7 @@ using PTR_RPC_STR = RPC_CSTR*;
 #endif
 
 // TODO: this requires MSVC and may preclude mingw or other non-msvc windows toolchains
+// BUG: from time to time, in non-embedded applications, a child window may fail when running multiple children
 #ifdef _MSC_VER
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #pragma warning(disable: 4047)

@@ -4,5 +4,6 @@
 
 #ifdef SFML_EMBEDDED_LOGGING
 #include <spdlog/spdlog.h>
-#include "SFML/Embedded/EmbeddedLogger.hpp"
 #endif
+
+#include "SFML/Embedded/EmbeddedLogger.hpp"
